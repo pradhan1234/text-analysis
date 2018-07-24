@@ -2,6 +2,7 @@ from __future__ import print_function
 import re
 from sets import Set
 import heapq
+import random
 
 #preprocess textfile, remove non alpha char's, convert to lower case, returns list of all words
 def preprocessfile(text_file):
@@ -153,8 +154,6 @@ def getChapterQuoteAppears(quote):
 	return -1
 	
 #generate sentences
-import random
-
 def getNextWord(currentWord, bag_of_words):
 
 	potentialNextWords = Set()

@@ -1,11 +1,11 @@
-
 from __future__ import print_function
-
 import re
+from sets import Set
+import heapq
+
 #preprocess textfile, remove non alpha char's, convert to lower case, returns list of all words
 def preprocessfile(text_file):
 	list_words = []
-
 
 	for line in text_file:
 		words_in_line = line.split()
@@ -23,8 +23,6 @@ def getTotalNumberOfWords(bag_of_words):
 
 
 #getTotalUniqueWords
-from sets import Set
-
 def getTotalUniqueWords(bag_of_words):
 
 	mySet = Set()
@@ -35,8 +33,6 @@ def getTotalUniqueWords(bag_of_words):
 	return len(mySet)
 
 
-
-import heapq
 
 #get20MostFrequentWords
 def getWordToCount(words):
@@ -68,8 +64,27 @@ def get20MostFrequentWords(words):
         
     return most_frequent
 
-# get20LeastFrequentWords
+def removeStopWords(bag_of_words, k):
 
+	file_stopwords = open("stopwords.txt", 'r')
+	stopwords_list = preprocessfile(file_stopwords)
+
+	topKstopwords = set(stopwords_list[:k])
+	refinedBagWords = []
+
+	for word in bag_of_words:
+		if word not in topKstopwords:
+			refinedBagWords.append(word)
+
+	return refinedBagWords
+
+def get20MostInterestingFrequentWords(bag_of_words):
+
+	refinedBagWords = removeStopWords(bag_of_words, 1000)
+
+	return get20MostFrequentWords(refinedBagWords)
+
+# get20LeastFrequentWords
 def get20LeastFrequentWords(words):
     word_to_count = getWordToCount(words)
     
@@ -87,19 +102,7 @@ def get20LeastFrequentWords(words):
         
     return most_frequent
 
-def removeStopWords(bag_of_words, k):
 
-	file_stopwords = open("stopwords.txt", 'r')
-	stopwords_list = preprocessfile(file_stopwords)
-
-	topKstopwords = set(stopwords_list[:k])
-	refinedBagWords = []
-
-	for word in bag_of_words:
-		if word not in topKstopwords:
-			refinedBagWords.append(word)
-
-	return refinedBagWords
 
 
 #getFrequencyOfWord() 
@@ -195,18 +198,20 @@ print("\nTotal Unique Words: ", getTotalUniqueWords(bag_of_words))
 
 print("\n20 most_frequent: ", get20MostFrequentWords(bag_of_words))
 
-print("\n\n\nAfter Removing top 100 most frequent words:")
-refinedBagWords = removeStopWords(bag_of_words, 100)
-# print("interesting", refinedBagWords)
-print("\nTotal Number of Words: ", getTotalNumberOfWords(refinedBagWords))
+# print("\n\n\nAfter Removing top 100 most frequent words:")
+# refinedBagWords = removeStopWords(bag_of_words, 1000)
+# # print("interesting", refinedBagWords)
+# print("\nTotal Number of Words: ", getTotalNumberOfWords(refinedBagWords))
 
-print("\nTotal Unique Words: ", getTotalUniqueWords(refinedBagWords))
+# print("\nTotal Unique Words: ", getTotalUniqueWords(refinedBagWords))
 
-print("\n20 most_frequent: ", get20MostFrequentWords(refinedBagWords))
+# print("\n20 most_frequent: ", get20MostFrequentWords(refinedBagWords))
 
-print("\n20 least frequent", get20LeastFrequentWords(refinedBagWords))
+print("\n20 most interesting frequent words", get20MostInterestingFrequentWords(bag_of_words))
 
-searchWord = "watson"
+print("\n20 least frequent", get20LeastFrequentWords(bag_of_words))
+
+searchWord = "pipe"
 print("\ncount chapterwise", getFrequencyOfWord(searchWord.lower()))
 
 print("\nFind Quote in chapter:", getChapterQuoteAppears("It is my belief, Watson, founded upon my experience, that the lowest and vilest alleys in London do not present a more dreadful record of sin than does the smiling and beautiful countryside."))
